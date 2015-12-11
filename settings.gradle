@@ -1,0 +1,11 @@
+include ':app'
+include ':gestureImageviewLibrary'
+include ':imageloadLibrary'
+include ':OneXListviewLibrary'
+include ':slidingmenu_library'
+include ':viewPagerlibrary'
+project(':gestureImageviewLibrary').projectDir = new File('libs/gestureImageviewLibrary')
+project(':imageloadLibrary').projectDir = new File('libs/imageloadLibrary')
+project(':OneXListviewLibrary').projectDir = new File('libs/OneXListviewLibrary')
+project(':slidingmenu_library').projectDir = new File('libs/slidingmenu_library')
+project(':viewPagerlibrary').projectDir = new File('libs/viewPagerlibrary')

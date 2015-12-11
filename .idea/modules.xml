@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Blog.iml" filepath="$PROJECT_DIR$/Blog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/OneXListviewLibrary/OneXListviewLibrary.iml" filepath="$PROJECT_DIR$/libs/OneXListviewLibrary/OneXListviewLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/gestureImageviewLibrary/gestureImageviewLibrary.iml" filepath="$PROJECT_DIR$/libs/gestureImageviewLibrary/gestureImageviewLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/imageloadLibrary/imageloadLibrary.iml" filepath="$PROJECT_DIR$/libs/imageloadLibrary/imageloadLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/slidingmenu_library/slidingmenu_library.iml" filepath="$PROJECT_DIR$/libs/slidingmenu_library/slidingmenu_library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/viewPagerlibrary/viewPagerlibrary.iml" filepath="$PROJECT_DIR$/libs/viewPagerlibrary/viewPagerlibrary.iml" />
+    </modules>
+  </component>
+</project>
