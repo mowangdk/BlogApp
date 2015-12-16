@@ -27,4 +27,6 @@ dependencies {
     compile project(':OneXListviewLibrary')
     compile project(':imageloadLibrary')
     compile project(':gestureImageviewLibrary')
+    compile files('libs/umeng_social_sdk.jar')
+    compile files('libs/umeng-update-v2.4.2.jar')
 }
