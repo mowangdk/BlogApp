@@ -19,6 +19,7 @@ import com.example.geyingqi.blog.model.Page;
 import com.example.geyingqi.blog.util.Constants;
 import com.example.geyingqi.blog.util.DB;
 import com.example.geyingqi.blog.util.HttpUtil;
+import com.example.geyingqi.blog.util.JsoupUtil;
 import com.example.geyingqi.blog.util.URLUtil;
 
 import java.text.SimpleDateFormat;
@@ -144,7 +145,8 @@ public class BlogFrag extends Fragment implements IXListViewRefreshListener, IXL
                 return Constants.DEF_RESULT_CODE.ERROR;
             }
             //解析html获取列表
-            List<BlogItem> list = JsoupUtil.getBlogItemList(blogType,temp);
+            List<BlogItem> list =
+                    JsoupUtil.getBlogItemList(blogType,temp);
 
             if (list.size() == 0){
                 return Constants.DEF_RESULT_CODE.NO_DATA;

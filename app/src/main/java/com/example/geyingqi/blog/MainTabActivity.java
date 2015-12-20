@@ -15,6 +15,8 @@ import android.view.Window;
 import android.widget.ImageButton;
 
 import com.example.geyingqi.blog.adapter.TabAdapter;
+import com.example.geyingqi.blog.net.Potocol;
+import com.example.geyingqi.blog.net.SyncHttp;
 import com.example.geyingqi.blog.view.CircleImageView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -36,6 +38,7 @@ public class MainTabActivity extends SlidingFragmentActivity implements View.OnC
     //要分享的图片
     private UMImage mUMImgBitmap = null;
 
+    public static final String DESCRIPTOR = "com.umeng.share";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

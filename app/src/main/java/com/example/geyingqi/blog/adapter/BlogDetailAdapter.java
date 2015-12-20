@@ -2,7 +2,6 @@ package com.example.geyingqi.blog.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.provider.SyncStateContract;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.geyingqi.blog.adapter.BlogDetailAdapter;
 import com.example.geyingqi.blog.util.Constants;
 import com.example.geyingqi.blog.util.HttpUtil;
+import com.example.geyingqi.blog.util.JsoupUtil;
 
 import me.maxwin.view.IXListViewLoadMore;
 import me.maxwin.view.XListView;
@@ -104,7 +105,7 @@ public class BlogDetailActivity extends Activity implements IXListViewLoadMore{
                 int state = blogDetailAdapter.getList().get(position-1).getState();
                 switch (state){
                     case Constants.DEF_BLOG_ITEM_TYPE.IMG: //点击的是图片
-                        String url = blogDetailAdapter.getList().get(position - 1).getImageLink();
+                        String url = blogDetailAdapter.getList().get(position - 1).getImgLink();
                         Intent i = new Intent();
                         i.setClass(BlogDetailActivity.this,ImageActivity.class);
                         i.putExtra("url", url);

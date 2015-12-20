@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -19,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,8 +36,6 @@ public class HttpUtil {
     public static String httpGetHost(String url){
         String strResult = "";
         try {
-
-            int i = 0;
             URL myurl = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) myurl.openConnection();
             conn.setRequestMethod("GET");
@@ -45,11 +45,7 @@ public class HttpUtil {
             conn.connect();
             int response = conn.getResponseCode();
             if (200 == response){
-                InputStream is = conn.getInputStream();
-                byte[] str = new byte[1024];
-                while((i = is.read(str))>0){
-                    strResult = new String(str,"utf-8");
-                }
+                strResult = conn.getResponseMessage();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,6 +65,8 @@ public class HttpUtil {
             conn.setConnectTimeout(5000);
             conn.setReadTimeout(5500);
             conn.connect();
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
             if (conn.getResponseCode() == 200){
                 InputStream is = conn.getInputStream();
                 byte[] str = new byte[1024];
@@ -173,8 +171,9 @@ public class HttpUtil {
                     .append("passwd").append("=").append(pw).append("&")
                     .append("select").append("=").append(select);
             byte[] bytes = params.toString().getBytes();
-            conn.getOutputStream().write(bytes);
-            conn.connect();
+            OutputStream out = conn.getOutputStream();
+            out.write(bytes);
+            out.close();
 
             if (200 == conn.getResponseCode()){
                 return 2;
@@ -194,7 +193,6 @@ public class HttpUtil {
                             return 3;
                         }
                     }
-
                 }
 
             }else if(404 == conn.getResponseCode()) {
@@ -209,11 +207,106 @@ public class HttpUtil {
         return result;
     }
 
-    public static String httpGetCookie(String url){return null;}
+    public static String httpGetCookie(String url){
+        Log.d("HttpUtil", "httpGetCookie "+url);
+        String strResult = "";
+        try {
+            URL myurl = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) myurl.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(15000);
+            conn.setRequestProperty("Cookie", cookieName+"="+cookieValue);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            if (200 == conn.getResponseCode()){
+                strResult = conn.getResponseMessage();
+            } else if (302 == conn.getResponseCode()){
+                strResult = "302";
+            } else if (404 == conn.getResponseCode()){
+                strResult = "-1";
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return strResult;
+    }
 
-    public static String httpPostCookie(String url,String id,String data){return null;}
+    public static String httpPostCookie(String url,String id,String data){
+        Log.d("HttpUtil", "httpPostCookie");
+        String result = "4";
+        try {
+            URL myurl = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) myurl.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            StringBuilder params = new StringBuilder();
+            params.append("marc_no").append("=").append(id).append("&")
+                    .append("r_content").append("=").append(data);
+            conn.setRequestProperty("Cookie", cookieName+"="+cookieValue);
+            byte[] bytes = params.toString().getBytes();
+            conn.getOutputStream().write(bytes);
+            conn.connect();
 
-    public static int getCookie(String url){return 0;}
+            if (200 == conn.getResponseCode()){
+                return "2";
+            } else if (302 == conn.getResponseCode()){
+                String str = conn.getHeaderField("Location");
+                if (str != null && str.length() > 0){
+                    Log.d("HttpUtil", "show the str = "+ str);
+                    return "3";
+                }
+            } else if (404 == conn.getResponseCode()){
+                return "-1";
+            }
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static int getCookie(String url){
+        Log.d("HttpUtil", "getCookie url = "+ url);
+        try {
+            URL myurl = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) myurl.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+            if (200 == conn.getResponseCode()){
+                Map<String, List<String>> map = conn.getHeaderFields();
+                Iterator<Map.Entry<String,List<String>>> iter =  map.entrySet().iterator();
+                while(iter.hasNext()){
+                    Log.d("HttpUtil", "key = "+iter.next().getKey());
+                    Log.d("HttpUtil", "key = "+iter.next().getValue());
+                }
+                return 2;
+            } else if (302 == conn.getResponseCode()){
+                String link = conn.getHeaderField("Location");
+                if (link != null && link.length() > 0){
+                    Log.d("HttpUtil", "show the link = "+link);
+                    return 3;
+                }
+            } else if (404 == conn.getResponseCode()) {
+                return -1;
+            }
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
 
 
 }
