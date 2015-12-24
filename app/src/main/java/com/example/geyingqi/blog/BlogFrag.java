@@ -1,6 +1,7 @@
 package com.example.geyingqi.blog;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.AsyncTask;
@@ -14,15 +15,20 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.example.geyingqi.blog.adapter.BlogListAdapter;
+import com.example.geyingqi.blog.model.Blog;
 import com.example.geyingqi.blog.model.BlogItem;
 import com.example.geyingqi.blog.model.Page;
 import com.example.geyingqi.blog.util.Constants;
 import com.example.geyingqi.blog.util.DB;
 import com.example.geyingqi.blog.util.HttpUtil;
-import com.example.geyingqi.blog.util.JsoupUtil;
 import com.example.geyingqi.blog.util.URLUtil;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -44,7 +50,7 @@ public class BlogFrag extends Fragment implements IXListViewRefreshListener, IXL
 
     private boolean isLoad = false; //是否加载
 
-    private int blogType = 0;//博客类别
+    private int blog = 1;//博客类别
 
     private DB db; //数据库引用
 
@@ -52,9 +58,10 @@ public class BlogFrag extends Fragment implements IXListViewRefreshListener, IXL
 
     String refreshDate = ""; //刷新日期
 
-
+    public BlogFrag(){}
+    @SuppressLint("ValidFragment")
     public BlogFrag(int blogType){
-        this.blogType = blogType;
+        this.blog = blogType;
     }
 
 
@@ -74,7 +81,7 @@ public class BlogFrag extends Fragment implements IXListViewRefreshListener, IXL
             refreshDate = getDate();
             blogListView.setRefreshTime(refreshDate);
             //加载数据库中的数据
-            List<BlogItem> list =  db.query(blogType);
+            List<BlogItem> list =  db.query(blog);
             adapter.setList(list);
             adapter.notifyDataSetChanged();
 
@@ -144,21 +151,43 @@ public class BlogFrag extends Fragment implements IXListViewRefreshListener, IXL
             if (temp == null){
                 return Constants.DEF_RESULT_CODE.ERROR;
             }
-            //解析html获取列表
-            List<BlogItem> list =
-                    JsoupUtil.getBlogItemList(blogType,temp);
+            List<BlogItem> array = new ArrayList<BlogItem>();
+            try {
+                JSONObject jObject = new JSONObject(temp);
+                JSONArray jsonArray = (JSONArray) jObject.get("list");
 
-            if (list.size() == 0){
+                for(int i = 0;i<jsonArray.length();i++){
+                    BlogItem blogItem = new BlogItem();
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    blogItem.setId(jsonObject.getInt("id"));
+                    blogItem.setLink(jsonObject.getString("url"));
+                    //blogItem.setType(jsonObject.getString("type"));
+                    blogItem.setDate(jsonObject.getString("create_at"));
+                    blogItem.setTitle(jsonObject.getString("title"));
+                    blogItem.setViewTime(""+jsonObject.getInt("view_count"));
+                    blogItem.setContent(jsonObject.getString("description"));
+                    array.add(blogItem);
+                }
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            if (array.size() == 0){
                 return Constants.DEF_RESULT_CODE.NO_DATA;
             }
 
 
             //刷新动作
             if (params[1].equals("refresh")){
-                adapter.setList(list);
+                adapter.setList(array);
                 return Constants.DEF_RESULT_CODE.REFRESH;
             } else {//加载更多
-                adapter.addList(list);
+                adapter.addList(array);
                 return Constants.DEF_RESULT_CODE.LOAD;
             }
 
@@ -183,7 +212,7 @@ public class BlogFrag extends Fragment implements IXListViewRefreshListener, IXL
                 case Constants.DEF_RESULT_CODE.REFRESH: // 刷新
                     blogListView.stopRefresh(getDate());
 
-                    db.delete(blogType);
+                    db.delete(blog);
                     db.insert(adapter.getList());// 保存到数据库
                     if (adapter.getCount() == 0) {
                         noBlogView.setVisibility(View.VISIBLE); // 显示无博客
@@ -209,8 +238,9 @@ public class BlogFrag extends Fragment implements IXListViewRefreshListener, IXL
     @Override
     public void onLoadMore() {
         System.out.println("loadmore");
+        blog = blog+1;
         new MainTask()
-                .execute(URLUtil.getBlogListURL(blogType, page.getCurrentPage()), "load");
+                .execute(URLUtil.getBlogListURL(blog), "load");
     }
 
 
@@ -219,7 +249,7 @@ public class BlogFrag extends Fragment implements IXListViewRefreshListener, IXL
     public void onRefresh() {
         System.out.println("refresh");
         page.setPageStart();
-        new MainTask().execute(URLUtil.getRefreshBlogListURL(blogType),
+        new MainTask().execute(URLUtil.getBlogListURL(blog),
                 "refresh");
     }
 

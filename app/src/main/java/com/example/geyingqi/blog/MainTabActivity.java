@@ -26,6 +26,10 @@ import com.umeng.socialize.media.UMImage;
 import com.umeng.update.UmengUpdateAgent;
 import com.viewpagerindicator.PageIndicator;
 
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
+
 public class MainTabActivity extends SlidingFragmentActivity implements View.OnClickListener {
 
     private CircleImageView mHeadIcon;
@@ -40,11 +44,22 @@ public class MainTabActivity extends SlidingFragmentActivity implements View.OnC
 
     public static final String DESCRIPTOR = "com.umeng.share";
 
+    public static String accessToken;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_tab);
+
+        OauthTask oauthTask = new OauthTask();
+        try {
+             accessToken = oauthTask.execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
 
         //检测应用更新
         UmengUpdateAgent.setUpdateOnlyWifi(false);
@@ -144,20 +159,20 @@ public class MainTabActivity extends SlidingFragmentActivity implements View.OnC
     }
 
     //客户端授权认证
-    private class OauthTask extends AsyncTask<String,Void,String>{
-
+    private class OauthTask extends AsyncTask<Void,Void,String>{
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(Void... params) {
             SyncHttp syncHttp = new SyncHttp();
-            String temp = null;
+            String accessToken = null;
             try{
-                temp = syncHttp.httpPost(params[0], Potocol.getOauthParams(Potocol.USER_NAME,Potocol.PASSWORD));
-
+                String temp = syncHttp.httpGet(Potocol.getOauthString(Potocol.USER_NAME,Potocol.PASSWORD),null);
+                JSONObject jObject = new JSONObject(temp);
+                accessToken = (String) jObject.get("access_token");
             } catch (Exception e){
                 e.printStackTrace();
             }
-            return temp;
+            return accessToken;
         }
 
         @Override

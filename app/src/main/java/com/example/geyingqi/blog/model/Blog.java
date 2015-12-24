@@ -9,7 +9,6 @@ public class Blog  {
     private String summary;
     private String imgLink;
     private String link;
-    private int state;
     private String commentCount;
 
     public String getTitle() {
@@ -52,13 +51,6 @@ public class Blog  {
         this.link = link;
     }
 
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-    }
 
     public String getCommentCount() {
         return commentCount;

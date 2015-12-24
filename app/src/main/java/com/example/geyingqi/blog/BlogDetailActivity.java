@@ -13,9 +13,17 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.geyingqi.blog.adapter.BlogDetailAdapter;
+import com.example.geyingqi.blog.model.Blog;
 import com.example.geyingqi.blog.util.Constants;
 import com.example.geyingqi.blog.util.HttpUtil;
 import com.example.geyingqi.blog.util.JsoupUtil;
+import com.example.geyingqi.blog.util.URLUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import me.maxwin.view.IXListViewLoadMore;
 import me.maxwin.view.XListView;
@@ -38,6 +46,8 @@ public class BlogDetailActivity extends Activity implements IXListViewLoadMore{
 
     public static String url;
 
+    public static String mContentUrl;
+
     private String filename;
 
     @Override
@@ -49,7 +59,7 @@ public class BlogDetailActivity extends Activity implements IXListViewLoadMore{
         initComponent();
 
         //执行异步加载
-        new MainTask().execute(url, Constants.DEF_TASK_TYPE.FIRST);
+        new MainTask().execute(mContentUrl, Constants.DEF_TASK_TYPE.FIRST);
 
     }
 
@@ -57,7 +67,8 @@ public class BlogDetailActivity extends Activity implements IXListViewLoadMore{
         blogDetailAdapter = new BlogDetailAdapter(this);
         url = getIntent().getExtras().getString("blogLink");
         filename = url.substring(url.lastIndexOf("/") + 1);
-        System.out.println("filename-->"+filename);
+        mContentUrl = URLUtil.ARTICLE_CONTENT+"?access_token="+MainTabActivity.accessToken+"&id="+filename;
+        System.out.println("filename-->"+mContentUrl);
     }
 
 
@@ -98,25 +109,26 @@ public class BlogDetailActivity extends Activity implements IXListViewLoadMore{
         mXlistView.setAdapter(blogDetailAdapter);
         mXlistView.setPullLoadEnable(this);
 
-        mXlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //获取点击列表项的状态
-                int state = blogDetailAdapter.getList().get(position-1).getState();
-                switch (state){
-                    case Constants.DEF_BLOG_ITEM_TYPE.IMG: //点击的是图片
-                        String url = blogDetailAdapter.getList().get(position - 1).getImgLink();
-                        Intent i = new Intent();
-                        i.setClass(BlogDetailActivity.this,ImageActivity.class);
-                        i.putExtra("url", url);
-                        startActivity(i);
-                        break;
-                    default:
-                        break;
-                }
+//        mXlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//               //获取点击列表项的状态
+//                int state = blogDetailAdapter.getList().get(position-1).getState();
+//                switch (state){
+//                    case Constants.DEF_BLOG_ITEM_TYPE.IMG: //点击的是图片
+//                        String url = blogDetailAdapter.getList().get(position - 1).getImgLink();
+//                        Intent i = new Intent();
+//                        i.setClass(BlogDetailActivity.this,ImageActivity.class);
+//                        i.putExtra("url", url);
+//                        startActivity(i);
+//                        break;
+//                    default:
 
-            }
-        });
+//                        break;
+//                }
+//
+//             }
+//        });
 
 
     }
@@ -137,8 +149,21 @@ public class BlogDetailActivity extends Activity implements IXListViewLoadMore{
                     return Constants.DEF_RESULT_CODE.ERROR;
                 }
             }
+            try {
+                JSONObject jsonObject = new JSONObject(temp);
+                List<Blog> list = new ArrayList<Blog>();
+                Blog blog = new Blog();
+                blog.setTitle(jsonObject.getString("title"));
+                blog.setContent(jsonObject.getString("content"));
+                blog.setLink(jsonObject.getString("url"));
+                blog.setCommentCount(""+jsonObject.getInt("comment_count"));
+                blog.setSummary(jsonObject.getString("description"));
+                list.add(blog);
+                blogDetailAdapter.addList(list);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-            blogDetailAdapter.addList(JsoupUtil.getContent(url,temp));
             if (params[1].equals(Constants.DEF_RESULT_CODE.REFRESH)){
                 return Constants.DEF_RESULT_CODE.REFRESH;
             }
@@ -169,7 +194,7 @@ public class BlogDetailActivity extends Activity implements IXListViewLoadMore{
     @Override
     public void onLoadMore() {
         if (!JsoupUtil.contentLastPage) {
-            new MainTask().execute(url, Constants.DEF_TASK_TYPE.NOR_FIRST);
+            new MainTask().execute(mContentUrl, Constants.DEF_TASK_TYPE.NOR_FIRST);
         } else {
             mXlistView.stopLoadMore();
         }

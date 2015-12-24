@@ -86,10 +86,6 @@ public class JsoupUtil {
     public static List<Comment> getBlogCommentList(String str, int pageIndex,int pageSize){
         return null;
     }
-    //获取博主的个人资料
-    public static Blogger getBloggerInfo(String str){
-        return null;
-    }
 
 
     //半角转换为全角  全角---指一个字符占用两个标准字符位置。 半角---指一字符占用一个标准的字符位置。

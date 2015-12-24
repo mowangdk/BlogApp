@@ -11,7 +11,7 @@ import java.util.List;
 public class Potocol {
     //本人的博客用户名和密码
     public static final String USER_NAME = "bell10027@qq.com";
-    public static final String PASSWORD = "";
+    public static final String PASSWORD = "gyq13514281656";
 
 
 
@@ -25,7 +25,7 @@ public class Potocol {
         StringBuilder sb = new StringBuilder();
         sb.append(APIUtil.OAUTH_URL).append("?").append("client_id=")
                 .append(APIUtil.APP_KEY).append("&client_secret=")
-                .append(APIUtil.APP_SCRECT).append("&grant_type=").append(pwd)
+                .append(APIUtil.APP_SCRECT).append("&grant_type=password")
                 .append("&username=").append(username).append("&password=")
                 .append(pwd);
         return sb.toString();

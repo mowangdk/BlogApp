@@ -5,8 +5,8 @@ package com.example.geyingqi.blog.util;
  */
 public class APIUtil  {
 
-    public static final String APP_KEY = "1100068";
-    public static final String APP_SCRECT = "0eb60f01633e4550a4780bf3093fa18f";
+    public static final String APP_KEY = "1100237";
+    public static final String APP_SCRECT = "3f0b7b30fa6445efb0cb06bf6ef1ee1c";
 
     // 授权接口
     public static final String OAUTH_URL = "http://api.csdn.net/oauth2/access_token";

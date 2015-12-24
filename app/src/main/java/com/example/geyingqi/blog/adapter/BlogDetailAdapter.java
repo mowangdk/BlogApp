@@ -100,46 +100,8 @@ public class BlogDetailAdapter extends BaseAdapter {
         Blog item = list.get(position);
         if (null == convertView) {
             holder = new ViewHolder();
-            switch (item.getState()) {
-                case Constants.DEF_BLOG_ITEM_TYPE.TITLE:// 显示标题
-                    convertView = layoutInflater.inflate(
-                            R.layout.article_detail_title_item, null);
-                    holder.content = (TextView) convertView.findViewById(R.id.text);
-                    break;
-                case Constants.DEF_BLOG_ITEM_TYPE.SUMMARY: // 摘要
-                    convertView = layoutInflater.inflate(
-                            R.layout.article_detail_summary_item, null);
-                    holder.content = (TextView) convertView.findViewById(R.id.text);
-                    break;
-                case Constants.DEF_BLOG_ITEM_TYPE.CONTENT: // 内容
-                    convertView = layoutInflater.inflate(
-                            R.layout.article_detail_item, null);
-                    holder.content = (TextView) convertView.findViewById(R.id.text);
-                    break;
-                case Constants.DEF_BLOG_ITEM_TYPE.IMG: // 图片
-                    convertView = layoutInflater.inflate(
-                            R.layout.article_detail_img_item, null);
-                    holder.image = (ImageView) convertView
-                            .findViewById(R.id.imageView);
-                    break;
-                case Constants.DEF_BLOG_ITEM_TYPE.BLOD_TITLE: // 加粗标题
-                    convertView = layoutInflater.inflate(
-                            R.layout.article_detail_bold_title_item, null);
-                    holder.content = (TextView) convertView.findViewById(R.id.text);
-                    break;
-                case Constants.DEF_BLOG_ITEM_TYPE.CODE: // 代码
-                    convertView = layoutInflater.inflate(
-                            R.layout.article_detail_code_item, null);
-                    holder.code = (WebView) convertView
-                            .findViewById(R.id.code_view);
-                    // holder.code.getSettings().setUseWideViewPort(true);
-                    // holder.code.getSettings().setJavaScriptEnabled(true);
-                    // holder.code.getSettings().setSupportZoom(true);
-                    // holder.code.getSettings().setBuiltInZoomControls(false);
-                    // holder.code.getSettings().setLoadWithOverviewMode(true);
-                    break;
-            }
-
+            convertView = layoutInflater.inflate( R.layout.article_detail_item, null);
+            holder.content = (TextView)convertView.findViewById(R.id.text);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -147,35 +109,9 @@ public class BlogDetailAdapter extends BaseAdapter {
         // System.out.println(item.getContent());
 
         if (null != item) {
-            switch (item.getState()) {
-                case Constants.DEF_BLOG_ITEM_TYPE.IMG: // 图片，异步加载
-                    imageLoader.displayImage(item.getContent(), holder.image,
-                            options);
-                    break;
-                case Constants.DEF_BLOG_ITEM_TYPE.CODE: // 代码，格式显示
 
-                    // 读取代码文件和模板文件
-                    String code = item.getContent();
-                    // String code = FileUtil.getFileContent(context,
-                    // "AboutActivity.java");
-                    String template = FileUtil.getFileContent(context, "code.html");
-                    // 生成结果
-                    String html = template.replace("{{code}}", code);
-                    holder.code.getSettings().setDefaultTextEncodingName("utf-8");
-                    holder.code.getSettings().setSupportZoom(true);
-                    holder.code.getSettings().setBuiltInZoomControls(true);
-
-                    // holder.code.loadUrl("file:///android_asset/code.html");
-
-                    holder.code.loadDataWithBaseURL("file:///android_asset/", html,
-                            "text/html", "utf-8", null);
-
-                    break;
-                default:
-                    holder.content.setText(Html.fromHtml(item.getContent(), null,
-                            new MyTagHandler()));
-                    break;
-            }
+            holder.content.setText(Html.fromHtml(item.getContent(), null,
+                    new MyTagHandler()));
         }
         return convertView;
     }
@@ -186,34 +122,7 @@ public class BlogDetailAdapter extends BaseAdapter {
         return 6;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        switch (list.get(position).getState()) {
-            case Constants.DEF_BLOG_ITEM_TYPE.TITLE:
-                return 0;
-            case Constants.DEF_BLOG_ITEM_TYPE.SUMMARY:
-                return 1;
-            case Constants.DEF_BLOG_ITEM_TYPE.CONTENT:
-                return 2;
-            case Constants.DEF_BLOG_ITEM_TYPE.IMG:
-                return 3;
-            case Constants.DEF_BLOG_ITEM_TYPE.BLOD_TITLE:
-                return 4;
-            case Constants.DEF_BLOG_ITEM_TYPE.CODE:
-                return 5;
-        }
-        return 1;
-    }
 
-    @Override
-    public boolean isEnabled(int position) {
-        switch (list.get(position).getState()) {
-            case Constants.DEF_BLOG_ITEM_TYPE.IMG:
-                return true;
-            default:
-                return false;
-        }
-    }
 
     private class ViewHolder {
         TextView id;

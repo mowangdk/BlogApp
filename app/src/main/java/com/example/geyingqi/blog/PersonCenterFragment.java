@@ -19,9 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.geyingqi.blog.model.Blogger;
+import com.example.geyingqi.blog.net.Potocol;
 import com.example.geyingqi.blog.util.Constants;
 import com.example.geyingqi.blog.util.HttpUtil;
-import com.example.geyingqi.blog.util.JsoupUtil;
 import com.example.geyingqi.blog.view.PullScrollView;
 import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
@@ -31,6 +31,10 @@ import com.umeng.update.UmengUpdateAgent;
 import com.umeng.update.UmengUpdateListener;
 import com.umeng.update.UpdateResponse;
 import com.umeng.update.UpdateStatus;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by geyingqi on 12/17/15.
@@ -60,7 +64,7 @@ public class PersonCenterFragment extends Fragment implements View.OnClickListen
     private Button showSport;
 
 
-    public static String URL = "http://blog.csdn.net/bell10027";
+    public static String[] URL = {"http://api.csdn.net/user/getavatar?"+MainTabActivity.accessToken,"http://api.csdn.net/blog/getstats?"+MainTabActivity.accessToken,"http://api.csdn.net/blog/getmedal?"+MainTabActivity.accessToken};
     public static final String DESCRIPTOR = "com.umeng.share";
 
     private Context mContext = null;
@@ -85,7 +89,7 @@ public class PersonCenterFragment extends Fragment implements View.OnClickListen
         initConfig();
 //        initAd(view);
 
-        new MainTask().execute(URL, Constants.DEF_TASK_TYPE.REFRESH);
+        new MainTask().execute(URL[0],URL[1],URL[2],Constants.DEF_TASK_TYPE.REFRESH);
         return view;
     }
 
@@ -295,7 +299,7 @@ public class PersonCenterFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onTurn() {
-        new MainTask().execute(URL, Constants.DEF_TASK_TYPE.REFRESH);
+        new MainTask().execute(URL[0],URL[1],URL[2],Constants.DEF_TASK_TYPE.REFRESH);
     }
 
 
@@ -377,8 +381,33 @@ public class PersonCenterFragment extends Fragment implements View.OnClickListen
 
         @Override
         protected Blogger doInBackground(String... params){
-            String temp = HttpUtil.httpGet(params[0]);
-            Blogger blogger = JsoupUtil.getBloggerInfo(temp);
+            String basicInfo = HttpUtil.httpGet(params[0]);
+            String status = HttpUtil.httpGet(params[1]);
+            String medal = HttpUtil.httpGet(params[2]);
+            Blogger blogger = new Blogger();
+            try {
+                JSONObject statusObject = new JSONObject(status);
+                blogger.setRank(""+statusObject.getInt("rank"));
+                blogger.setView_count(""+statusObject.getInt("view_count"));
+                blogger.setPoint(""+statusObject.getInt("point"));
+                blogger.setTransportText(""+statusObject.getInt("repost_count"));
+                blogger.setOriginalText(""+statusObject.getInt("original_count"));
+                blogger.setTranslationText(""+statusObject.getInt("translated_count"));
+                blogger.setCommentText(""+statusObject.getInt("comment_count"));
+
+                JSONArray jsonArray =  new JSONArray(medal);
+                String[] medalTitle = new String[10];
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject metalObject = jsonArray.getJSONObject(i);
+                    medalTitle[i] = metalObject.getString("title");
+                }
+                blogger.setMedals(medalTitle);
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return blogger;
         }
 
@@ -389,19 +418,19 @@ public class PersonCenterFragment extends Fragment implements View.OnClickListen
             if (result == null){
                 return;
             }
-            String[] rank = result.getRank().split("\\|");
-            String visitNum = rank[0];
-            String jifenNum = rank[1];
-            String rankNum = rank[2];
 
-            String[] statics = result.getStatistics().split("\\|");
-            String originalNum = statics[0];
-            String transportNum = statics[1];
-            String translationNum = statics[2];
-            String commentNum = statics[3];
+            String visitNum = result.getView_count();
+            String jifenNum = result.getPoint();
+            String rankNum = result.getRank();
+            String originalNum = result.getOriginalText();
+            String transportNum = result.getTransportText();
+            String translationNum = result.getTranslationText();
+            String commentNum = result.getCommentText();
+
             visitText.setText(visitNum);
             jifenText.setText(jifenNum);
             rankText.setText(rankNum);
+
             originalText.setText(originalNum);
             transportText.setText(transportNum);
             translationText.setText(translationNum);

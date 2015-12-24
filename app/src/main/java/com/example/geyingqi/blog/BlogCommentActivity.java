@@ -3,7 +3,6 @@ package com.example.geyingqi.blog;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.AsyncTask;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;

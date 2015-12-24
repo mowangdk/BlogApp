@@ -58,7 +58,7 @@ public class HttpUtil {
         System.out.println("httpGet"+url);
         String strResult = "";
         try {
-            int i = 0;
+
             URL myurl = new URL(url);
             HttpURLConnection conn= (HttpURLConnection) myurl.openConnection();
             conn.setRequestMethod("GET");
@@ -70,7 +70,7 @@ public class HttpUtil {
             if (conn.getResponseCode() == 200){
                 InputStream is = conn.getInputStream();
                 byte[] str = new byte[1024];
-                while((i = is.read(str))>0){
+                while(( is.read(str))>0){
                     strResult = new String(str,"utf-8");
                 }
             }
