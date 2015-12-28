@@ -46,20 +46,8 @@ public class Constants {
         public static final String LOAD = "LOAD";
     }
 
-    /**
-     * 文章类型
-     */
-    public class DEF_ARTICLE_TYPE {
-        public static final int HOME = 0;		// 首页
-        public static final int ANDROID = 1;	// Android
-        public static final int COCOS2DX = 2;	// Cocos2dx
-        public static final int INTERVIEW = 3;	// 面试宝典
-        public static final int LUA = 4;		// Lua
-        public static final int DESIGN_PATTERN = 5; // 设计模式
-        public static final int XIAOWU_RECORD = 6;	// 记录点滴
-        public static final int NETWORK_PROT = 7;	// 网络协议
-        public static final int GO = 8;			// go语言
-        public static final int JIAN_ZHAN = 9;	// 建站经验
-    }
+
+
+
 
 }

@@ -64,9 +64,8 @@ public class HttpUtil {
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(5000);
             conn.setReadTimeout(5500);
-            conn.connect();
             conn.setDoInput(true);
-            conn.setDoOutput(true);
+            conn.connect();
             if (conn.getResponseCode() == 200){
                 InputStream is = conn.getInputStream();
                 byte[] str = new byte[1024];
@@ -95,7 +94,6 @@ public class HttpUtil {
             conn.setReadTimeout(10000);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
-            conn.setDoOutput(true);
             conn.setRequestProperty("Cookie", cookieName+"="+cookieValue);
             conn.connect();
             int code = conn.getResponseCode();
@@ -217,7 +215,6 @@ public class HttpUtil {
             conn.setConnectTimeout(15000);
             conn.setReadTimeout(15000);
             conn.setRequestProperty("Cookie", cookieName+"="+cookieValue);
-            conn.setDoOutput(true);
             conn.setDoInput(true);
             if (200 == conn.getResponseCode()){
                 strResult = conn.getResponseMessage();

@@ -5,7 +5,7 @@
     android:background="@color/light_blue"
     android:orientation="horizontal" >
 
-    <com.xiaowu.blogclient.view.CircleImageView
+    <com.example.geyingqi.blog.view.CircleImageView
         android:id="@+id/head_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="4dp"
         android:layout_weight="1"
-        android:text="小巫CSDN博客"
+        android:text="geyingqi的CSDN博客"
         android:textColor="@color/white"
         android:textSize="21sp"
         android:textStyle="bold" >

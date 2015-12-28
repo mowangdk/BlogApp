@@ -44,7 +44,7 @@ public class BlogDetailAdapter extends BaseAdapter {
         super();
         this.context = context;
         layoutInflater = layoutInflater.from(context);
-        list = new ArrayList<Blog>();
+        list = new ArrayList<>();
         imageLoader.init(ImageLoaderConfiguration.createDefault(context));
 
         options = new DisplayImageOptions.Builder()
