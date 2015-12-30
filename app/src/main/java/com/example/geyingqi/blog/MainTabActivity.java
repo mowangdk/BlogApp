@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
@@ -54,6 +55,7 @@ public class MainTabActivity extends SlidingFragmentActivity implements View.OnC
         OauthTask oauthTask = new OauthTask();
         try {
              accessToken = oauthTask.execute().get();
+             Log.d("MainTabActivity", "show the Oauth certification accessToken = "+accessToken);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -141,11 +143,12 @@ public class MainTabActivity extends SlidingFragmentActivity implements View.OnC
     public void onBackPressed() {
         //弹出退出对话框
         AlertDialog.Builder dialog = new AlertDialog.Builder(MainTabActivity.this)
-                .setMessage("您确定要推出吗?")
+                .setMessage("您确定要退出吗?")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
+
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -155,7 +158,6 @@ public class MainTabActivity extends SlidingFragmentActivity implements View.OnC
                     }
                 });
         dialog.show();
-        super.onBackPressed();
     }
 
     //客户端授权认证

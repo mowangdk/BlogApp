@@ -14,12 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.geyingqi.blog.model.Blogger;
-import com.example.geyingqi.blog.net.Potocol;
 import com.example.geyingqi.blog.util.Constants;
 import com.example.geyingqi.blog.util.HttpUtil;
 import com.example.geyingqi.blog.view.PullScrollView;
@@ -35,6 +33,8 @@ import com.umeng.update.UpdateStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Arrays;
 
 /**
  * Created by geyingqi on 12/17/15.
@@ -64,7 +64,7 @@ public class PersonCenterFragment extends Fragment implements View.OnClickListen
     private Button showSport;
 
 
-    public static String[] URL = {"http://api.csdn.net/user/getavatar?"+MainTabActivity.accessToken,"http://api.csdn.net/blog/getstats?"+MainTabActivity.accessToken,"http://api.csdn.net/blog/getmedal?"+MainTabActivity.accessToken};
+    public static String[] URL = {"http://api.csdn.net/user/getavatar?access_token="+MainTabActivity.accessToken,"http://api.csdn.net/blog/getstats?access_token="+MainTabActivity.accessToken,"http://api.csdn.net/blog/getmedal?access_token="+MainTabActivity.accessToken};
     public static final String DESCRIPTOR = "com.umeng.share";
 
     private Context mContext = null;
@@ -88,7 +88,6 @@ public class PersonCenterFragment extends Fragment implements View.OnClickListen
         findViews(view);
         initConfig();
 //        initAd(view);
-
         new MainTask().execute(URL[0],URL[1],URL[2],Constants.DEF_TASK_TYPE.REFRESH);
         return view;
     }
@@ -381,9 +380,10 @@ public class PersonCenterFragment extends Fragment implements View.OnClickListen
 
         @Override
         protected Blogger doInBackground(String... params){
-            String basicInfo = HttpUtil.httpGet(params[0]);
+           // String basicInfo = HttpUtil.httpGet(params[0]);
             String status = HttpUtil.httpGet(params[1]);
             String medal = HttpUtil.httpGet(params[2]);
+            Log.d("PersonCenterFragment", "doinBackground status = "+status + " medal = "+medal);
             Blogger blogger = new Blogger();
             try {
                 JSONObject statusObject = new JSONObject(status);
@@ -415,7 +415,7 @@ public class PersonCenterFragment extends Fragment implements View.OnClickListen
         @Override
         protected void onPostExecute(Blogger result){
             super.onPostExecute(result);
-            if (result == null){
+            if (result.getRank() == null){
                 return;
             }
 

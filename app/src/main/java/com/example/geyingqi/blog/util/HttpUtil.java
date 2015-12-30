@@ -74,7 +74,7 @@ public class HttpUtil {
                 }
             }
             String strResult2 = conn.getResponseMessage();
-            Log.d("HttpUtl", "show the responseMessage = "+strResult2);
+            Log.d("HttpUtl", "show the responseMessage strResult1  = "+strResult +"strResult2 = "+strResult2);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
